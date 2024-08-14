@@ -43,7 +43,7 @@ def test_performance(request):
     max_time = 0
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(perform_encryption_decryption) for _ in range(1000)]  # 1000 paralelnih poziva
+        futures = [executor.submit(perform_encryption_decryption) for _ in range(500)]  # 500 paralelnih poziva
 
     results = [f.result() for f in futures]
 
