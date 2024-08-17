@@ -1,18 +1,21 @@
-from django.shortcuts import render
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
+import base64
+import concurrent.futures
+import io
 import os
 import time
-import concurrent.futures
-import psutil
+import urllib
+
 import matplotlib.pyplot as plt
-import io
-import urllib, base64
+import psutil
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from django.shortcuts import render
 
 
 # Funkcija za generiranje slučajnog stringa
 def generate_random_string(length):
     return os.urandom(length).hex()
+
 
 # Funkcija za kriptiranje stringa koristeći AES
 def encrypt_string_aes(random_string):
@@ -20,6 +23,7 @@ def encrypt_string_aes(random_string):
     cipher = AES.new(key, AES.MODE_EAX)
     ciphertext, tag = cipher.encrypt_and_digest(random_string.encode())
     return key, cipher.nonce, ciphertext, tag
+
 
 # Funkcija za dekriptiranje stringa koristeći AES
 def decrypt_string_aes(key, nonce, ciphertext, tag):
@@ -30,6 +34,7 @@ def decrypt_string_aes(key, nonce, ciphertext, tag):
     except ValueError:
         return None
 
+
 # Funkcija koja vrši cijeli proces i mjeri vrijeme
 def perform_encryption_decryption():
     random_string = generate_random_string(5000)  # Generiraj slučajni string od 5000 znakova
@@ -38,6 +43,7 @@ def perform_encryption_decryption():
     decrypted_string = decrypt_string_aes(key, nonce, ciphertext, tag)  # Dekriptiraj string
     end_time = time.time()
     return decrypted_string == random_string, end_time - start_time
+
 
 # Glavni view za testiranje performansi
 def test_performance(request):
@@ -68,7 +74,7 @@ def test_performance(request):
     # Završna mjerenja CPU-a
     final_cpu_percent = psutil.cpu_percent(interval=None, percpu=True)
 
-    # Prilagodba numeracije jezgri (od 1 do n umjesto 0 do n-1)
+    # Numeracija jezgri (od 1 do n)
     cores = range(1, len(initial_cpu_percent) + 1)
 
     # Grafički prikaz CPU opterećenja
