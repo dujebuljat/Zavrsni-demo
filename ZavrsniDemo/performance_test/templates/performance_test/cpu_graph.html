@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            margin-top: 20px;
+        }
+        .graph {
+            text-align: center;
+        }
+        .table {
+            margin-top: 20px;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>CPU Usage Graph</h1>
+    <div class="container">
+        <div class="graph">
+            <img id="cpuGraph" src="{{ cpu_usage_graph }}" alt="CPU Usage Graph">
+        </div>
+        <div class="table">
+            <h2>Execution Time Details</h2>
+            <table>
+                <tr>
+                    <th>Total Execution Time</th>
+                    <td>{{ total_execution_time }} seconds</td>
+                </tr>
+                <tr>
+                    <th>Average Time per Request</th>
+                    <td>{{ average_time_per_request }} seconds</td>
+                </tr>
+                <tr>
+                    <th>Min Time</th>
+                    <td>{{ min_time }} seconds</td>
+                </tr>
+                <tr>
+                    <th>Max Time</th>
+                    <td>{{ max_time }} seconds</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

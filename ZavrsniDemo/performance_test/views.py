@@ -1,9 +1,14 @@
-from django.http import JsonResponse
+from django.shortcuts import render
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import os
 import time
 import concurrent.futures
+import psutil
+import matplotlib.pyplot as plt
+import io
+import urllib, base64
+
 
 # Funkcija za generiranje slučajnog stringa
 def generate_random_string(length):
@@ -38,6 +43,9 @@ def perform_encryption_decryption():
 def test_performance(request):
     start_time = time.time()  # Započni mjerenje ukupnog vremena
 
+    # Početna mjerenja CPU-a
+    initial_cpu_percent = psutil.cpu_percent(interval=None, percpu=True)
+
     total_time = 0
     min_time = float('inf')
     max_time = 0
@@ -57,7 +65,33 @@ def test_performance(request):
     avg_time = total_time / len(futures)
     execution_time_total = round(time.time() - start_time, 2)  # Ukupno vrijeme za sve zahtjeve
 
-    return JsonResponse({
+    # Završna mjerenja CPU-a
+    final_cpu_percent = psutil.cpu_percent(interval=None, percpu=True)
+
+    # Prilagodba numeracije jezgri (od 1 do n umjesto 0 do n-1)
+    cores = range(1, len(initial_cpu_percent) + 1)
+
+    # Grafički prikaz CPU opterećenja
+    plt.figure(figsize=(6, 3))
+    plt.plot(cores, initial_cpu_percent, label='Initial CPU Percent', color='blue', marker='o')
+    plt.plot(cores, final_cpu_percent, label='Final CPU Percent', color='red', marker='o')
+    plt.xlabel('CPU Core')
+    plt.ylabel('CPU Usage (%)')
+    plt.title('CPU Usage Before and After Execution')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+
+    # Pretvorba grafika u sliku za HTML prikaz
+    fig = plt.gcf()
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    uri = 'data:image/png;base64,' + urllib.parse.quote(string)
+
+    return render(request, 'performance_test/cpu_graph.html', {
+        'cpu_usage_graph': uri,
         'total_execution_time': execution_time_total,
         'average_time_per_request': round(avg_time, 6),
         'min_time': round(min_time, 6),
