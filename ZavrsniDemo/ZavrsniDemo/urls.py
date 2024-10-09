@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.shortcuts import redirect
 from performance_test import views
 
 urlpatterns = [
+    path('', lambda request: redirect('test/', permanent=False)),
     path('admin/', admin.site.urls),
     path('test/', views.test_performance, name='test_performance'),
 ]
